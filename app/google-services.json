@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "319027682655",
+    "project_id": "graduationproject-ituce17"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:319027682655:android:2e41fac8a78e4e21",
+        "android_client_info": {
+          "package_name": "com.mkytr.enpublic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "319027682655-noc19sb22f0fm89ik13khp39evt1bsum.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mkytr.enpublic",
+            "certificate_hash": "8c1fcc387ec30ee5818fd12f0968c56b3c1b0d8a"
+          }
+        },
+        {
+          "client_id": "319027682655-bid2hg23ea1avsg1ip2ph3c850mjcbod.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgyPWo0oABUn1uOShKc2XyAbvR6FVFT_E"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Enpublic</string>
+    <string name="backend_client_id">319027682655-bid2hg23ea1avsg1ip2ph3c850mjcbod.apps.googleusercontent.com</string>
+    <string name="google_maps_api_key" translatable="false">AIzaSyAWH0A-W_6m8gJDrF5ctEurkiSsZ1pa6QY</string>
+    <string name="title_activity_main">Enpublic</string>
+    <string name="et_to_hint">To...</string>
+    <string name="et_from_hint">From...</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_profile">Profile</string>
+    <string name="label_search">Search</string>
+    <string name="et_search_hint">Search...</string>
+    <string name="tv_empty_list">Nothing found...</string>
+    <string name="b_from_station">From</string>
+    <string name="b_to_station">To</string>
+    <string name="b_go">Go</string>
+</resources>
