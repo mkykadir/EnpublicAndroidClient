@@ -2,6 +2,7 @@ package com.mkytr.enpublic;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -44,6 +45,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, View.OnClickListener, GoogleMap.OnMarkerClickListener {
     public static final String BASE_API_URL = "http://192.168.1.42:5000/";
+    public static final String PREF_NAME = "enpublic_prefs";
 
     public static final int SEARCH_STATION_REQUEST = 1;
     public static final int FROM_STATION_REQUEST = 2;
@@ -92,14 +94,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.mSearch:
-                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+                Intent searchIntent = new Intent(getApplicationContext(), SearchActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList("data", nearbyLocation);
-                intent.putExtras(bundle);
-                startActivityForResult(intent, SEARCH_STATION_REQUEST);
+                searchIntent.putExtras(bundle);
+                startActivityForResult(searchIntent, SEARCH_STATION_REQUEST);
                 break;
             case R.id.mProfile:
-                // Profile menu item
+                SharedPreferences credentials = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+                String auth = credentials.getString("auth", null);
+                Intent profileIntent = null;
+                if(auth == null) {
+                    profileIntent = new Intent(getApplicationContext(), SigninActivity.class);
+                }else{
+                    profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+                }
+                startActivity(profileIntent);
                 break;
         }
 

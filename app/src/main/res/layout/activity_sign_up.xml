@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.mkytr.enpublic.SignUpActivity"
+    android:orientation="vertical">
+
+    <ProgressBar
+        android:id="@+id/pbSignup"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_gravity="center"/>
+
+    <ScrollView
+        android:id="@+id/svSignUpForm"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/etNameSignup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/et_name"
+                android:inputType="textPersonName" />
+
+            <EditText
+                android:id="@+id/etMailSignup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/et_mail"
+                android:inputType="textEmailAddress" />
+
+            <TextView
+                android:id="@+id/tvEmailError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_email_error"
+                android:textColor="@android:color/holo_red_light"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/etUsernameSignup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/et_username"
+                android:inputType="textAutoComplete" />
+
+            <EditText
+                android:id="@+id/etPasswordSignup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:ems="10"
+                android:hint="@string/et_password"
+                android:inputType="textPassword" />
+
+            <EditText
+                android:id="@+id/etPasswordConfirmSignup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:ems="10"
+                android:hint="@string/et_password_confirm"
+                android:inputType="textPassword" />
+
+            <TextView
+                android:id="@+id/tvConfirmationError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_confirm_error"
+                android:textColor="@android:color/holo_red_light"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/bSignup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/b_signup"
+                android:onClick="onSignUpButtonClick"/>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

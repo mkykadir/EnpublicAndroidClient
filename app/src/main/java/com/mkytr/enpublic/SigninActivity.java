@@ -1,119 +1,84 @@
 package com.mkytr.enpublic;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.util.Base64;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
+import android.widget.Toast;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInApi;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
-public class SigninActivity extends AppCompatActivity implements View.OnClickListener {
-    private GoogleSignInClient mGoogleSignClient;
-    private int RC_SIGN_IN = 0;
-    @Override
-    protected void onStart() {
-        super.onStart();
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        updateUI(account);
-    }
+public class SigninActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
-
-        SignInButton signInButton = findViewById(R.id.sign_in_button);
-        signInButton.setOnClickListener(this);
-        Button signout = (Button) findViewById(R.id.sign_out_button);
-        signout.setOnClickListener(this);
-
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.backend_client_id))
-                .requestEmail()
-                .build();
-
-
-        mGoogleSignClient = GoogleSignIn.getClient(this, gso);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public void onSigninButtonClick(View v){
+        EditText etUsername = findViewById(R.id.etUsernameLogin);
+        String username = etUsername.getText().toString();
+        EditText etPassword = findViewById(R.id.etPasswordLogin);
+        String password = etPassword.getText().toString();
 
-        if(requestCode == RC_SIGN_IN){
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            handleSignInResult(task);
-        }
-    }
-
-    public void updateUI(GoogleSignInAccount account){
-        // account.getEmail()
-
-        TextView mail = (TextView)findViewById(R.id.tvMail);
-        SignInButton button = (SignInButton) findViewById(R.id.sign_in_button);
-        Button signout = (Button) findViewById(R.id.sign_out_button);
-
-        if(account == null) {
-            mail.setVisibility(View.GONE);
-            signout.setVisibility(View.GONE);
-            button.setVisibility(View.VISIBLE);
+        if(username.equals("") || password.equals("")){
+            Toast.makeText(this, "Please enter credentials!", Toast.LENGTH_SHORT).show();
             return;
         }
-        button.setVisibility(View.GONE);
-        signout.setVisibility(View.VISIBLE);
-        mail.setVisibility(View.VISIBLE);
-        String tokenId = account.getIdToken();
-        String email = account.getEmail();
-        Log.d("SignIn", email);
-        mail.setText(tokenId);
-    }
 
-    public void signIn(){
-        Log.d("SignIn", "Entered signIn method");
-        Intent signinIntent = mGoogleSignClient.getSignInIntent();
-        startActivityForResult(signinIntent, RC_SIGN_IN);
-    }
+        String toEncode = username + ":" + password;
+        String authContent = Base64.encodeToString(toEncode.getBytes(), Base64.NO_WRAP);
+        final String authText = "Basic " + authContent;
 
-    public void handleSignInResult(Task<GoogleSignInAccount> completedTask){
-        try{
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            updateUI(account);
-        }catch(ApiException e){
-            Log.w("SignIn", "Failed");
-            updateUI(null);
-        }
-    }
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl(MainActivity.BASE_API_URL)
+                .addConverterFactory(GsonConverterFactory.create());
 
-    public void signOut(){
-        mGoogleSignClient.signOut().addOnCompleteListener(this, new OnCompleteListener<Void>() {
+        Retrofit retrofit = builder.build();
+        EnpublicApi client = retrofit.create(EnpublicApi.class);
+
+        final ProgressBar pbLogin = findViewById(R.id.pbLogin);
+        pbLogin.setVisibility(View.VISIBLE);
+        final ScrollView svLoginForm = findViewById(R.id.svLoginForm);
+        svLoginForm.setVisibility(View.GONE);
+
+        Call<POSTResult> call = client.loginUser(authText);
+        call.enqueue(new Callback<POSTResult>() {
             @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                updateUI(null);
+            public void onResponse(Call<POSTResult> call, Response<POSTResult> response) {
+                POSTResult result = response.body();
+                if(result.getResult() == 200){
+                    SharedPreferences.Editor preferences = getSharedPreferences(MainActivity.PREF_NAME, MODE_PRIVATE).edit();
+                    preferences.putString("auth", authText);
+                    preferences.apply();
+                    Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+                    startActivity(profileIntent);
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<POSTResult> call, Throwable t) {
+                Toast.makeText(SigninActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                pbLogin.setVisibility(View.GONE);
+                svLoginForm.setVisibility(View.VISIBLE);
             }
         });
+
     }
 
-    @Override
-    public void onClick(View v) {
-        switch(v.getId()){
-            case R.id.sign_in_button:
-                signIn();
-                break;
-            case R.id.sign_out_button:
-                signOut();
-                break;
-        }
+    public void onSignupButtonClick(View v){
+        Intent signUp = new Intent(getApplicationContext(), SignUpActivity.class);
+        startActivity(signUp);
     }
 }
