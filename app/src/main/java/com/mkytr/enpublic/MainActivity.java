@@ -44,7 +44,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, View.OnClickListener, GoogleMap.OnMarkerClickListener {
-    public static final String BASE_API_URL = "http://192.168.1.42:5000/";
+    public static final String BASE_API_URL = "http://enpublic.mkytr.com/";
     public static final String PREF_NAME = "enpublic_prefs";
 
     public static final int SEARCH_STATION_REQUEST = 1;
