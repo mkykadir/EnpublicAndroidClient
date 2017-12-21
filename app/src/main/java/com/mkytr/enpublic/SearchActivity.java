@@ -3,6 +3,7 @@ package com.mkytr.enpublic;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -62,10 +63,12 @@ public class SearchActivity extends AppCompatActivity{
             mList = bundle.getParcelableArrayList("data");
         }
 
-        if(mList != null){
-            listAdapter = new SearchListAdapter(this, R.layout.list_view_station, mList);
-            lvSearchResult.setAdapter(listAdapter);
-        }
+        if(mList == null)
+            mList = new ArrayList<>();
+
+
+        listAdapter = new SearchListAdapter(this, R.layout.list_view_station, mList);
+        lvSearchResult.setAdapter(listAdapter);
 
     }
 
@@ -93,7 +96,8 @@ public class SearchActivity extends AppCompatActivity{
 
         @Override
         public void afterTextChanged(Editable s) {
-            Call<List<Station>> call = client.searcyStationsByName(s.toString());
+            SharedPreferences preferences = getSharedPreferences(MainActivity.PREF_NAME, MODE_PRIVATE);
+            Call<List<Station>> call = client.searcyStationsByName(preferences.getString("auth", null), s.toString());
             call.enqueue(new Callback<List<Station>>() {
                 @Override
                 public void onResponse(Call<List<Station>> call, Response<List<Station>> response) {
