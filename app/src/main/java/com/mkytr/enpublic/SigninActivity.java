@@ -56,6 +56,7 @@ public class SigninActivity extends AppCompatActivity {
         call.enqueue(new Callback<POSTResult>() {
             @Override
             public void onResponse(Call<POSTResult> call, Response<POSTResult> response) {
+                // TODO: Null pointer exception
                 POSTResult result = response.body();
                 if(result.getResult() == 200){
                     SharedPreferences.Editor preferences = getSharedPreferences(MainActivity.PREF_NAME, MODE_PRIVATE).edit();

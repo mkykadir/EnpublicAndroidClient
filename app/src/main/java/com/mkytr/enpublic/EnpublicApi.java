@@ -24,6 +24,9 @@ public interface EnpublicApi {
     @GET("station/search")
     Call<List<Station>> searcyStationsByName(@Nullable @Header("Authorization") String basicAuth, @Query("name") String name);
 
+    @GET("station/direct")
+    Call<List<List<DirectionStation>>> getDirections(@Nullable @Header("Authorization") String basicAuth, @Query("from") String fromStation, @Query("to") String toStation);
+
     @POST("signup")
     Call<POSTResult> signupUser(@Body UserSignup signup);
 

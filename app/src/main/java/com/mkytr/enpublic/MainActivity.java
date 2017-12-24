@@ -4,7 +4,9 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
@@ -30,6 +32,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
@@ -74,6 +77,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
         mFusedLocation = LocationServices.getFusedLocationProviderClient(this);
 
+
+        Button bGo = findViewById(R.id.bGo);
+        bGo.setOnClickListener(this);
         Button bFromStation = findViewById(R.id.bFromStation);
         bFromStation.setOnClickListener(this);
         Button bToStation = findViewById(R.id.bToStation);
@@ -310,7 +316,50 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Log.d("CHECKINFO", "Text should be set");
                 edit.setText(selectedStation.getName());
             }
+        }else if(viewId == R.id.bGo){
+            EditText etFrom = findViewById(R.id.etFrom);
+            EditText etTo = findViewById(R.id.etTo);
+            calculateDirections(etFrom.getText().toString(), etTo.getText().toString());
         }
+    }
+
+    public void calculateDirections(String from, String to){
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl(BASE_API_URL)
+                .addConverterFactory(GsonConverterFactory.create());
+
+        Retrofit retrofit = builder.build();
+        EnpublicApi client = retrofit.create(EnpublicApi.class);
+        Call<List<List<DirectionStation>>> call = client.getDirections(null, from, to);
+        call.enqueue(new Callback<List<List<DirectionStation>>>() {
+            @Override
+            public void onResponse(Call<List<List<DirectionStation>>> call, Response<List<List<DirectionStation>>> response) {
+                List<List<DirectionStation>> resultingList = response.body();
+
+                for(List<DirectionStation> directionList : resultingList){
+                    // TODO: Map'e eklemeden önce bir listede göstermek gerekebilir
+                    List<Marker> mapMarkers = new ArrayList<>();
+                    for(DirectionStation station : directionList){
+                        LatLng position = new LatLng(station.getLatitude(), station.getLongitude());
+                        Marker added = mMap.addMarker(new MarkerOptions().position(position).title(station.getName()));
+                        added.setTag(station);
+                        mapMarkers.add(added);
+                    }
+                    for(int i = 0; i < mapMarkers.size()-1; i++){
+                        Marker current = mapMarkers.get(i);
+                        Marker next = mapMarkers.get(i+1);
+                        DirectionStation station = (DirectionStation) current.getTag();
+                        int colorVal = Color.parseColor("#"+station.getWay().getColor());
+                        mMap.addPolyline(new PolylineOptions().add(current.getPosition(), next.getPosition()).width(4).color(colorVal));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<List<DirectionStation>>> call, Throwable t) {
+                Toast.makeText(MainActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
