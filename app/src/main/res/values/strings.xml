@@ -27,7 +27,7 @@
     <string name="tv_confirm_error">Confirmation doesn\'t match with password!</string>
     <string name="menu_logout">Log Out</string>
     <string name="title_profile_activity">Profile</string>
-
+    <string name="tv_empty_result">No results found</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>

@@ -58,7 +58,7 @@ public class SearchActivity extends AppCompatActivity{
         });
         etSearch.addTextChangedListener(new SearchTextListener());
 
-        Bundle bundle = getIntent().getExtras();
+        Bundle bundle = getIntent().getBundleExtra("bundledata");
         if(bundle != null){
             mList = bundle.getParcelableArrayList("data");
         }

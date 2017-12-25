@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public static final int SEARCH_STATION_REQUEST = 1;
     public static final int FROM_STATION_REQUEST = 2;
     public static final int TO_STATION_REQUEST = 3;
+    public static final int STATION_DIRECTION_REQUEST = 4;
 
     public static final int PERMISSION_LOCATION_REQUEST = 1;
 
@@ -104,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Intent searchIntent = new Intent(getApplicationContext(), SearchActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList("data", nearbyLocation);
-                searchIntent.putExtras(bundle);
+                searchIntent.putExtra("bundledata", bundle);
                 startActivityForResult(searchIntent, SEARCH_STATION_REQUEST);
                 break;
             case R.id.mProfile:
@@ -172,6 +173,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 if(lastAdded != null)
                     onMarkerClick(lastAdded);
+            }
+        }else if(requestCode == STATION_DIRECTION_REQUEST){
+            ArrayList<DirectionStation> result = data.getParcelableArrayListExtra("direction");
+            mMap.clear();
+            List<Marker> mapMarkers = new ArrayList<>();
+            for(DirectionStation station : result){
+                LatLng position = new LatLng(station.getLatitude(), station.getLongitude());
+                Marker added = mMap.addMarker(new MarkerOptions().position(position).title(station.getName()));
+                added.setTag(station);
+                mapMarkers.add(added);
+            }
+            for(int i = 0; i < mapMarkers.size()-1; i++){
+                Marker current = mapMarkers.get(i);
+                Marker next = mapMarkers.get(i+1);
+                DirectionStation station = (DirectionStation) current.getTag();
+                int colorVal = Color.parseColor("#"+station.getWay().getColor());
+                mMap.addPolyline(new PolylineOptions().add(current.getPosition(), next.getPosition()).width(4).color(colorVal));
             }
         }
     }
@@ -319,47 +337,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }else if(viewId == R.id.bGo){
             EditText etFrom = findViewById(R.id.etFrom);
             EditText etTo = findViewById(R.id.etTo);
-            calculateDirections(etFrom.getText().toString(), etTo.getText().toString());
+            Intent intent = new Intent(getApplicationContext(), DirectionResultsActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("fromStation", etFrom.getText().toString());
+            bundle.putString("toStation", etTo.getText().toString());
+            intent.putExtra("bundledata", bundle);
+            startActivityForResult(intent, STATION_DIRECTION_REQUEST);
+            //calculateDirections(etFrom.getText().toString(), etTo.getText().toString());
         }
-    }
-
-    public void calculateDirections(String from, String to){
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(BASE_API_URL)
-                .addConverterFactory(GsonConverterFactory.create());
-
-        Retrofit retrofit = builder.build();
-        EnpublicApi client = retrofit.create(EnpublicApi.class);
-        Call<List<List<DirectionStation>>> call = client.getDirections(null, from, to);
-        call.enqueue(new Callback<List<List<DirectionStation>>>() {
-            @Override
-            public void onResponse(Call<List<List<DirectionStation>>> call, Response<List<List<DirectionStation>>> response) {
-                List<List<DirectionStation>> resultingList = response.body();
-
-                for(List<DirectionStation> directionList : resultingList){
-                    // TODO: Map'e eklemeden önce bir listede göstermek gerekebilir
-                    List<Marker> mapMarkers = new ArrayList<>();
-                    for(DirectionStation station : directionList){
-                        LatLng position = new LatLng(station.getLatitude(), station.getLongitude());
-                        Marker added = mMap.addMarker(new MarkerOptions().position(position).title(station.getName()));
-                        added.setTag(station);
-                        mapMarkers.add(added);
-                    }
-                    for(int i = 0; i < mapMarkers.size()-1; i++){
-                        Marker current = mapMarkers.get(i);
-                        Marker next = mapMarkers.get(i+1);
-                        DirectionStation station = (DirectionStation) current.getTag();
-                        int colorVal = Color.parseColor("#"+station.getWay().getColor());
-                        mMap.addPolyline(new PolylineOptions().add(current.getPosition(), next.getPosition()).width(4).color(colorVal));
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<List<DirectionStation>>> call, Throwable t) {
-                Toast.makeText(MainActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
     @Override
