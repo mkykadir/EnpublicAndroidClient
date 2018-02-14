@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.mkytr.enpublic.SigninActivity"
+    tools:context="com.mkytr.enpublic.Activities.SigninActivity"
     android:orientation="vertical">
 
     <ProgressBar
@@ -23,45 +23,84 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
             android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/etUsernameLogin"
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="270dp"
+                android:background="@color/colorPrimary"
+                android:focusableInTouchMode="true"
+                android:focusedByDefault="true">
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="300dp"
+                    android:layout_height="200dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:src="@mipmap/ic_launcher" />
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="16dp"
+                    android:text="Giriş yaparak birçok avantajdan faydalanabilirsiniz. Ödülleri toplar, kişiselleştirilmiş tarifler alırsınız."
+                    android:textAlignment="center"
+                    android:textColor="@android:color/white" />
+            </RelativeLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/et_username"
-                android:inputType="textAutoComplete" />
+                android:layout_margin="10dp"
+                android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/etPasswordLogin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:ems="10"
-                android:hint="@string/et_password"
-                android:inputType="textPassword" />
+                <EditText
+                    android:id="@+id/etUsernameLogin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:focusedByDefault="false"
+                    android:hint="@string/et_username"
+                    android:inputType="textAutoComplete"
+                    android:singleLine="true" />
 
-            <Button
-                android:id="@+id/bSignin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="@string/b_signin"
-                android:onClick="onSigninButtonClick"/>
+                <EditText
+                    android:id="@+id/etPasswordLogin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:ems="10"
+                    android:hint="@string/et_password"
+                    android:inputType="textPassword"
+                    android:singleLine="true" />
 
-            <Button
-                android:id="@+id/bSignUpLogin"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/b_signup"
-                android:onClick="onSignupButtonClick"
-                android:textAllCaps="false"
-                android:textColor="@color/colorPrimary"
-                android:textSize="12sp" />
+                <Button
+                    android:id="@+id/bSignin"
+                    style="@style/Widget.AppCompat.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:onClick="onSigninButtonClick"
+                    android:text="@string/b_signin"
+                    android:textColor="@android:color/white" />
+
+                <Button
+                    android:id="@+id/bSignUpLogin"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:onClick="onSignupButtonClick"
+                    android:text="@string/b_signup"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="12sp" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

@@ -1,4 +1,4 @@
-package com.mkytr.enpublic;
+package com.mkytr.enpublic.Activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,13 +17,15 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-
-import org.w3c.dom.Text;
+import com.mkytr.enpublic.RestfulObjects.Achievement;
+import com.mkytr.enpublic.EnpublicApi;
+import com.mkytr.enpublic.MainActivity;
+import com.mkytr.enpublic.R;
+import com.mkytr.enpublic.RestfulObjects.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,7 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         final GridView achievementGrid = findViewById(R.id.gvAchivements);
-        final LinearLayout llProfileInfo = findViewById(R.id.llProfileInfo);
+        final RelativeLayout llProfileInfo = findViewById(R.id.rlProfileInfo);
         final ProgressBar pbProfile = findViewById(R.id.pbProfile);
         TextView gridEmpty = new TextView(this);
         gridEmpty.setVisibility(View.GONE);

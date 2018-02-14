@@ -1,15 +1,21 @@
-package com.mkytr.enpublic;
+package com.mkytr.enpublic.Activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Toast;
+
+import com.mkytr.enpublic.EnpublicApi;
+import com.mkytr.enpublic.MainActivity;
+import com.mkytr.enpublic.POSTResult;
+import com.mkytr.enpublic.R;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,6 +29,12 @@ public class SigninActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
+        try{
+            getSupportActionBar().setElevation(0);
+        }catch (NullPointerException e){
+            return;
+        }
+
     }
 
     public void onSigninButtonClick(View v){
@@ -79,7 +91,7 @@ public class SigninActivity extends AppCompatActivity {
     }
 
     public void onSignupButtonClick(View v){
-        Intent signUp = new Intent(getApplicationContext(), SignUpActivity.class);
+        Intent signUp = new Intent(getApplicationContext(), SignupActivity.class);
         startActivity(signUp);
     }
 }

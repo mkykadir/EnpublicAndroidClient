@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.mkytr.enpublic.SignUpActivity"
+    tools:context="com.mkytr.enpublic.Activities.SignupActivity"
     android:orientation="vertical">
 
     <ProgressBar
@@ -86,11 +86,22 @@
 
             <Button
                 android:id="@+id/bSignup"
+                style="@style/Widget.AppCompat.Button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
+                android:backgroundTint="@color/colorPrimary"
+                android:onClick="onSignUpButtonClick"
                 android:text="@string/b_signup"
-                android:onClick="onSignUpButtonClick"/>
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/bTermsAndConditions"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Terms and Conditions"
+                android:textColor="@color/colorPrimary" />
 
         </LinearLayout>
     </ScrollView>

@@ -18,6 +18,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mkytr.enpublic.RestfulObjects.DirectionLine;
+import com.mkytr.enpublic.RestfulObjects.DirectionStation;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

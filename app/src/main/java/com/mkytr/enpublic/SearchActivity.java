@@ -20,6 +20,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mkytr.enpublic.RestfulObjects.Station;
+
 import java.util.ArrayList;
 import java.util.List;
 

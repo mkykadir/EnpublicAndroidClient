@@ -25,39 +25,35 @@
             android:value="@string/google_maps_api_key" />
 
         <activity
-            android:name=".ProfileActivity"
+            android:name=".Activities.ProfileActivity"
             android:label="@string/title_profile_activity"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".Activities.MapsActivity" />
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main">
+        </activity>
+        <activity
+            android:name=".SearchActivity"
+            android:label="@string/label_search"
+            android:parentActivityName=".Activities.MapsActivity" />
+        <activity
+            android:name=".Activities.SigninActivity"
+            android:label="@string/title_signin_activity"
+            android:parentActivityName=".Activities.MapsActivity" />
+        <activity
+            android:name=".Activities.SignupActivity"
+            android:label="@string/title_signup_activity"
+            android:parentActivityName=".Activities.SigninActivity" />
+        <activity android:name=".DirectionResultsActivity" />
+        <activity
+            android:name=".Activities.MapsActivity"
+            android:label="@string/title_activity_maps">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".SearchActivity"
-            android:label="@string/label_search"
-            android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".LoginActivity"
-            android:label="@string/title_activity_login"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.mkytr.enpublic.MainActivity" />
-        </activity>
-        <activity
-            android:name=".SigninActivity"
-            android:label="@string/title_signin_activity"
-            android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".SignUpActivity"
-            android:label="@string/title_signup_activity"
-            android:parentActivityName=".SigninActivity" />
-        <activity android:name=".DirectionResultsActivity"></activity>
     </application>
 
 </manifest>

@@ -4,60 +4,63 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.mkytr.enpublic.ProfileActivity"
+    tools:context="com.mkytr.enpublic.Activities.ProfileActivity"
     android:orientation="vertical">
 
-    <ProgressBar
-        android:id="@+id/pbProfile"
+    <RelativeLayout
+        android:id="@+id/rlProfileInfo"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"/>
+        android:layout_height="196dp"
+        android:background="@color/colorPrimary">
 
-    <LinearLayout
-        android:id="@+id/llProfileInfo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center_vertical|center"
-        android:orientation="vertical"
-        android:paddingBottom="15dp"
-        android:paddingLeft="25dp"
-        android:paddingRight="25dp"
-        android:paddingTop="15dp"
-        android:visibility="gone">
+        <ProgressBar
+            android:id="@+id/pbProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:progressTint="@android:color/white"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/iProfile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            app:srcCompat="@mipmap/ic_launcher" />
 
         <TextView
             android:id="@+id/tvUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/iProfile"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
             android:text="Muhammed Kadir Yücel"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvUsername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="mkykadir"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Small" />
-
-    </LinearLayout>
+            android:layout_below="@+id/tvUserName"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="11dp"
+            android:text="\@mkykadir"
+            android:textColor="@android:color/white" />
+    </RelativeLayout>
 
     <GridView
         android:id="@+id/gvAchivements"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="auto_fit"
         android:columnWidth="90dp"
-        android:verticalSpacing="10dp"
-        android:horizontalSpacing="10dp"
         android:gravity="center"
+        android:horizontalSpacing="10dp"
+        android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
-        android:visibility="gone"
-        />
+        android:verticalSpacing="10dp"
+        android:visibility="visible" />
 
 </LinearLayout>

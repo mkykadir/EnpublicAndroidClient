@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
@@ -34,6 +33,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.mkytr.enpublic.Activities.ProfileActivity;
+import com.mkytr.enpublic.Activities.SigninActivity;
+import com.mkytr.enpublic.RestfulObjects.DirectionStation;
+import com.mkytr.enpublic.RestfulObjects.Station;
 
 import java.util.ArrayList;
 import java.util.HashMap;
