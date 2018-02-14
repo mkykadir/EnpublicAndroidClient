@@ -1,4 +1,4 @@
-package com.mkytr.enpublic;
+package com.mkytr.enpublic.RestfulObjects;
 
 /**
  * Created by mkyka on 20.12.2017.

@@ -3,6 +3,12 @@ package com.mkytr.enpublic;
 
 import android.support.annotation.Nullable;
 
+import com.mkytr.enpublic.RestfulObjects.Achievement;
+import com.mkytr.enpublic.RestfulObjects.DirectionStation;
+import com.mkytr.enpublic.RestfulObjects.Station;
+import com.mkytr.enpublic.RestfulObjects.User;
+import com.mkytr.enpublic.RestfulObjects.UserSignup;
+
 import java.util.List;
 import java.util.Map;
 
