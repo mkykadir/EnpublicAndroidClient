@@ -21,6 +21,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mkytr.enpublic.ApiError;
+import com.mkytr.enpublic.RestErrorUtils;
 import com.mkytr.enpublic.RestfulObjects.Achievement;
 import com.mkytr.enpublic.EnpublicApi;
 import com.mkytr.enpublic.MainActivity;
@@ -57,60 +59,56 @@ public class ProfileActivity extends AppCompatActivity {
         achievementGrid.setAdapter(mAdapter);
         achievementGrid.setEmptyView(gridEmpty);
 
+
+        // After log-in we should get profile information
+        User profile = getIntent().getParcelableExtra("profile-info");
+
         SharedPreferences preferences = getSharedPreferences(MainActivity.PREF_NAME ,MODE_PRIVATE);
         final String auth = preferences.getString("auth", null);
-        if(auth == null){
+        if(auth == null){ // If user not logged in!
             Intent intent = new Intent(getApplicationContext(), SigninActivity.class);
             startActivity(intent);
             finish();
             return;
         }
-        final EnpublicApi client;
-
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(MainActivity.BASE_API_URL)
-                .addConverterFactory(GsonConverterFactory.create());
-
-        Retrofit retrofit = builder.build();
-        client = retrofit.create(EnpublicApi.class);
+        final EnpublicApi client = MapsActivity.restClient.getApiInterface();
 
         final TextView tvUserName = findViewById(R.id.tvUserName);
         final TextView tvUsername = findViewById(R.id.tvUsername);
 
-        Call<User> call = client.userProfile(auth);
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                User result = response.body();
-                tvUserName.setText(result.getName());
-                tvUsername.setText(result.get_id());
+        if (profile == null){
+            Call<User> call = client.userProfile(auth);
+            call.enqueue(new Callback<User>() {
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
+                    if(response.isSuccessful()){
+                        User result = response.body();
+                        tvUserName.setText(result.getName());
+                        tvUsername.setText(result.get_username());
 
-                for (String achievementId : result.getAchievement()){
-                    Call<Achievement> achievementCall = client.getAchievement(auth, achievementId);
-                    achievementCall.enqueue(new Callback<Achievement>() {
-                        @Override
-                        public void onResponse(Call<Achievement> call, Response<Achievement> response) {
-                            Achievement result = response.body();
-                            mList.add(result); // TODO: Check if works
-                            mAdapter.notifyDataSetChanged();
-                        }
-
-                        @Override
-                        public void onFailure(Call<Achievement> call, Throwable t) {
-
-                        }
-                    });
+                        pbProfile.setVisibility(View.GONE);
+                        llProfileInfo.setVisibility(View.VISIBLE);
+                        achievementGrid.setVisibility(View.VISIBLE);
+                    }else{
+                        ApiError error = RestErrorUtils.parseError(response);
+                        Toast.makeText(ProfileActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                        // TODO: Check this error
+                    }
                 }
-                pbProfile.setVisibility(View.GONE);
-                llProfileInfo.setVisibility(View.VISIBLE);
-                achievementGrid.setVisibility(View.VISIBLE);
-            }
 
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Toast.makeText(ProfileActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onFailure(Call<User> call, Throwable t) {
+                    Toast.makeText(ProfileActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }else{
+            tvUserName.setText(profile.getName());
+            tvUsername.setText(profile.get_username());
+
+            pbProfile.setVisibility(View.GONE);
+            llProfileInfo.setVisibility(View.VISIBLE);
+            achievementGrid.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -124,7 +122,7 @@ public class ProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.mLogout:
-                SharedPreferences.Editor prefEdit = getSharedPreferences(MainActivity.PREF_NAME, MODE_PRIVATE).edit();
+                SharedPreferences.Editor prefEdit = getSharedPreferences(MapsActivity.PREF_NAME, MODE_PRIVATE).edit();
                 prefEdit.remove("auth");
                 prefEdit.apply();
                 finish();

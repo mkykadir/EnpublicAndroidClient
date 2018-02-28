@@ -33,13 +33,13 @@ public interface EnpublicApi {
     @GET("station/direct")
     Call<List<List<DirectionStation>>> getDirections(@Nullable @Header("Authorization") String basicAuth, @Query("from") String fromStation, @Query("to") String toStation);
 
-    @POST("signup")
-    Call<POSTResult> signupUser(@Body UserSignup signup);
+    @POST("api/signup")
+    Call<User> signupUser(@Body UserSignup signup);
 
     @GET("login")
     Call<POSTResult> loginUser(@Header("Authorization") String basicAuth);
 
-    @GET("profile")
+    @GET("api/profile")
     Call<User> userProfile(@Header("Authorization") String basicAuth);
 
     @GET("achievement/{id}")

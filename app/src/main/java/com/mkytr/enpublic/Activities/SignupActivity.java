@@ -2,25 +2,27 @@ package com.mkytr.enpublic.Activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mkytr.enpublic.ApiError;
 import com.mkytr.enpublic.EnpublicApi;
-import com.mkytr.enpublic.MainActivity;
-import com.mkytr.enpublic.POSTResult;
 import com.mkytr.enpublic.R;
+import com.mkytr.enpublic.RestErrorUtils;
+import com.mkytr.enpublic.RestfulObjects.User;
 import com.mkytr.enpublic.RestfulObjects.UserSignup;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -28,65 +30,62 @@ public class SignupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+        String checkLoggedIn = getSharedPreferences(MapsActivity.PREF_NAME, MODE_PRIVATE).getString("auth", null);
+        if(checkLoggedIn != null){
+            // User already logged-in
+            finish();
+        }
+
+        EditText etMail = findViewById(R.id.etMailSignup);
+        etMail.addTextChangedListener(new EmailFieldListener());
+        EditText etConfirm = findViewById(R.id.etPasswordConfirmSignup);
+        etConfirm.addTextChangedListener(new ConfirmFieldListener());
     }
 
     public void onSignUpButtonClick(View v){
-        boolean validEmail = validateEmailAddress();
-        boolean validConfirm = validateConfirmPassword();
-        TextView tvEmailError = findViewById(R.id.tvEmailError);
-        TextView tvConfirmationError = findViewById(R.id.tvConfirmationError);
-
-        if(!validEmail)
-            tvEmailError.setVisibility(View.VISIBLE);
-        else
-            tvEmailError.setVisibility(View.GONE);
-
-        if(!validConfirm)
-            tvConfirmationError.setVisibility(View.VISIBLE);
-        else
-            tvConfirmationError.setVisibility(View.GONE);
-
-        if(!validEmail || !validConfirm)
-            return;
-
         EditText etName = findViewById(R.id.etNameSignup);
-        String name = etName.getText().toString();
         EditText etMail = findViewById(R.id.etMailSignup);
-        String mail = etMail.getText().toString();
         EditText etUsername = findViewById(R.id.etUsernameSignup);
-        String username = etUsername.getText().toString();
         EditText etPassword = findViewById(R.id.etPasswordSignup);
+
+        String name = etName.getText().toString();
+        String mail = etMail.getText().toString();
+        String username = etUsername.getText().toString();
         String password = etPassword.getText().toString();
 
-        if(name.trim().equals("") || mail.trim().equals("") || username.trim().equals("") || password.trim().equals(""))
+        if(name.trim().equals("") || mail.trim().equals("") || username.trim().equals("") || password.trim().equals("")){
+            Toast.makeText(this, "All fields are required!", Toast.LENGTH_LONG).show();
             return;
+        }
 
-        // call retrofit
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(MainActivity.BASE_API_URL)
-                .addConverterFactory(GsonConverterFactory.create());
-
-        Retrofit retrofit = builder.build();
-        EnpublicApi client = retrofit.create(EnpublicApi.class);
 
         UserSignup credentials = new UserSignup(username, name, mail, password);
+
         final ScrollView svSignUpForm = findViewById(R.id.svSignUpForm);
         final ProgressBar pbSignup = findViewById(R.id.pbSignup);
         svSignUpForm.setVisibility(View.GONE);
         pbSignup.setVisibility(View.VISIBLE);
-        Call<POSTResult> call = client.signupUser(credentials);
-        call.enqueue(new Callback<POSTResult>() {
+
+        EnpublicApi client = MapsActivity.restClient.getApiInterface();
+        Call<User> call = client.signupUser(credentials);
+        call.enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<POSTResult> call, Response<POSTResult> response) {
-                POSTResult result = response.body();
-                if(result.getResult() == 200){
-                    Toast.makeText(SignupActivity.this, "Succesfully registered!", Toast.LENGTH_SHORT).show();
+            public void onResponse(Call<User> call, Response<User> response) {
+                if(response.isSuccessful()){
+                    User result = response.body();
+                    Toast.makeText(SignupActivity.this, "Successfully registered, "+result.get_username(),Toast.LENGTH_LONG).show();
                     finish();
+                }else {
+                    ApiError error = RestErrorUtils.parseError(response);
+                    Toast.makeText(SignupActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                    svSignUpForm.setVisibility(View.VISIBLE);
+                    pbSignup.setVisibility(View.GONE);
                 }
             }
 
             @Override
-            public void onFailure(Call<POSTResult> call, Throwable t) {
+            public void onFailure(Call<User> call, Throwable t) {
                 Toast.makeText(SignupActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 svSignUpForm.setVisibility(View.VISIBLE);
                 pbSignup.setVisibility(View.GONE);
@@ -95,15 +94,95 @@ public class SignupActivity extends AppCompatActivity {
 
     }
 
-    public boolean validateEmailAddress(){
-        EditText etMail = findViewById(R.id.etMailSignup);
-        String content = etMail.getText().toString();
-        return Patterns.EMAIL_ADDRESS.matcher(content).matches();
+    /**
+     *
+     * @param email Email address to be checked
+     * @return If email parameters fit with general email address syntax return true
+     */
+    public boolean validateEmailAddress(String email){
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    public boolean validateConfirmPassword(){
-        EditText etPassword = findViewById(R.id.etPasswordSignup);
-        EditText etConfirmPassword = findViewById(R.id.etPasswordConfirmSignup);
-        return etPassword.getText().toString().contentEquals(etConfirmPassword.getText().toString());
+
+    /**
+     *
+     * @param pass Original password value
+     * @param confirm Confirmation password value
+     * @return If two paramateres contain same content return true
+     */
+    public boolean validateConfirmPassword(String pass, String confirm){
+        return pass.contentEquals(confirm);
+    }
+
+    /**
+     * Show email validation error during entrance of email address
+     * Incorrect values will disable sign up button
+     */
+    private class EmailFieldListener implements TextWatcher {
+        TextView tvEmailError;
+        Button bSignUp;
+        public EmailFieldListener(){
+            tvEmailError = findViewById(R.id.tvEmailError);
+            bSignUp = findViewById(R.id.bSignup);
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            // Nothing
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            // Nothing
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if(validateEmailAddress(s.toString())){
+                tvEmailError.setVisibility(View.GONE);
+                bSignUp.setEnabled(true);
+            }
+            else{
+                tvEmailError.setVisibility(View.VISIBLE);
+                bSignUp.setEnabled(false);
+            }
+        }
+    }
+
+    /**
+     * Show password confirm error during entrance of values
+     * Incorrect values will disable sign up button
+     */
+    private class ConfirmFieldListener implements TextWatcher {
+        TextView tvConfirmationError;
+        EditText etPassword;
+        Button bSignUp;
+        public ConfirmFieldListener(){
+            tvConfirmationError = findViewById(R.id.tvConfirmationError);
+            etPassword = findViewById(R.id.etPasswordSignup);
+            bSignUp = findViewById(R.id.bSignup);
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            // Nothing
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            // Nothing
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if(validateConfirmPassword(etPassword.getText().toString(), s.toString())){
+                tvConfirmationError.setVisibility(View.GONE);
+                bSignUp.setEnabled(true);
+            }
+            else{
+                tvConfirmationError.setVisibility(View.VISIBLE);
+                bSignUp.setEnabled(false);
+            }
+        }
     }
 }

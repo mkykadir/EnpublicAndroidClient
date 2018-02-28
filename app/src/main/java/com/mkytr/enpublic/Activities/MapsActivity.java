@@ -15,11 +15,15 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.mkytr.enpublic.R;
+import com.mkytr.enpublic.RestClient;
 
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+
+    public static final String PREF_NAME = "enpublic_prefs";
+    public static final RestClient restClient = new RestClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

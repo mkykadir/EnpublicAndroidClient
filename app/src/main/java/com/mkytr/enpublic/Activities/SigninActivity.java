@@ -12,10 +12,13 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import com.mkytr.enpublic.ApiError;
 import com.mkytr.enpublic.EnpublicApi;
 import com.mkytr.enpublic.MainActivity;
 import com.mkytr.enpublic.POSTResult;
 import com.mkytr.enpublic.R;
+import com.mkytr.enpublic.RestErrorUtils;
+import com.mkytr.enpublic.RestfulObjects.User;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,6 +32,16 @@ public class SigninActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
+
+        String checkLoggedIn = getSharedPreferences(MapsActivity.PREF_NAME, MODE_PRIVATE).getString("auth", "none");
+        if(!checkLoggedIn.contentEquals("none")){
+            // User already logged-in
+            Intent intent = new Intent(this, ProfileActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }
+
         try{
             getSupportActionBar().setElevation(0);
         }catch (NullPointerException e){
@@ -44,7 +57,7 @@ public class SigninActivity extends AppCompatActivity {
         String password = etPassword.getText().toString();
 
         if(username.equals("") || password.equals("")){
-            Toast.makeText(this, "Please enter credentials!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "All fields are required!", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -52,36 +65,36 @@ public class SigninActivity extends AppCompatActivity {
         String authContent = Base64.encodeToString(toEncode.getBytes(), Base64.NO_WRAP);
         final String authText = "Basic " + authContent;
 
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(MainActivity.BASE_API_URL)
-                .addConverterFactory(GsonConverterFactory.create());
-
-        Retrofit retrofit = builder.build();
-        EnpublicApi client = retrofit.create(EnpublicApi.class);
-
+        EnpublicApi client = MapsActivity.restClient.getApiInterface();
         final ProgressBar pbLogin = findViewById(R.id.pbLogin);
         pbLogin.setVisibility(View.VISIBLE);
         final ScrollView svLoginForm = findViewById(R.id.svLoginForm);
         svLoginForm.setVisibility(View.GONE);
 
-        Call<POSTResult> call = client.loginUser(authText);
-        call.enqueue(new Callback<POSTResult>() {
+        Call<User> call = client.userProfile(authText);
+        call.enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<POSTResult> call, Response<POSTResult> response) {
-                // TODO: Null pointer exception
-                POSTResult result = response.body();
-                if(result.getResult() == 200){
-                    SharedPreferences.Editor preferences = getSharedPreferences(MainActivity.PREF_NAME, MODE_PRIVATE).edit();
+            public void onResponse(Call<User> call, Response<User> response) {
+                if(response.isSuccessful()){
+                    User result = response.body();
+                    SharedPreferences.Editor preferences = getSharedPreferences(MapsActivity.PREF_NAME, MODE_PRIVATE).edit();
                     preferences.putString("auth", authText);
                     preferences.apply();
-                    Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+                    Intent profileIntent = new Intent(SigninActivity.this, ProfileActivity.class);
+                    profileIntent.putExtra("profile-info", result);
+                    profileIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(profileIntent);
                     finish();
+                }else {
+                    ApiError error = RestErrorUtils.parseError(response);
+                    Toast.makeText(SigninActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                    pbLogin.setVisibility(View.GONE);
+                    svLoginForm.setVisibility(View.VISIBLE);
                 }
             }
 
             @Override
-            public void onFailure(Call<POSTResult> call, Throwable t) {
+            public void onFailure(Call<User> call, Throwable t) {
                 Toast.makeText(SigninActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 pbLogin.setVisibility(View.GONE);
                 svLoginForm.setVisibility(View.VISIBLE);
