@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mkytr.enpublic.ApiError;
+import com.mkytr.enpublic.RestClient;
 import com.mkytr.enpublic.RestErrorUtils;
 import com.mkytr.enpublic.RestfulObjects.Achievement;
 import com.mkytr.enpublic.EnpublicApi;
@@ -71,7 +72,7 @@ public class ProfileActivity extends AppCompatActivity {
             finish();
             return;
         }
-        final EnpublicApi client = MapsActivity.restClient.getApiInterface();
+        final EnpublicApi client = RestClient.getInstance().getInterface();
 
         final TextView tvUserName = findViewById(R.id.tvUserName);
         final TextView tvUsername = findViewById(R.id.tvUsername);

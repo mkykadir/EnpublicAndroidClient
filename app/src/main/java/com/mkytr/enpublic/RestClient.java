@@ -7,21 +7,28 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by mkyka on 28.02.2018.
  */
 
-public final class RestClient {
-    public static final String BASE_API_URL = "http://192.168.1.34:5000/";
-    private EnpublicApi apiInterface;
-    private Retrofit retrofit;
+public class RestClient {
+    private static final String BASE_API_URL = "http://192.168.1.34:5000/";
+    private static RestClient currentInstance = null;
+    private static EnpublicApi apiInterface = null;
+    private static Retrofit retrofit = null;
 
-    public RestClient(){
+    public static RestClient getInstance() {
+        if(currentInstance == null) {
+            currentInstance = new RestClient();
+        }
+        return currentInstance;
+    }
+
+    private RestClient(){
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(BASE_API_URL)
                 .addConverterFactory(GsonConverterFactory.create());
-
         retrofit = builder.build();
         apiInterface = retrofit.create(EnpublicApi.class);
     }
 
-    public EnpublicApi getApiInterface(){
+    public EnpublicApi getInterface(){
         return apiInterface;
     }
 

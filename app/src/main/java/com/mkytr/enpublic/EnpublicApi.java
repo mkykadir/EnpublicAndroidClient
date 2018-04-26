@@ -4,6 +4,7 @@ package com.mkytr.enpublic;
 import android.support.annotation.Nullable;
 
 import com.mkytr.enpublic.RestfulObjects.Achievement;
+import com.mkytr.enpublic.RestfulObjects.ActivityDetails;
 import com.mkytr.enpublic.RestfulObjects.DirectionStation;
 import com.mkytr.enpublic.RestfulObjects.Station;
 import com.mkytr.enpublic.RestfulObjects.User;
@@ -23,6 +24,8 @@ import retrofit2.http.QueryMap;
 
 public interface EnpublicApi {
     // @Header("Authorization") String basicAuth,
+
+    // TODO fix those according to the latest API changes
 
     @GET("station/nearby")
     Call<List<Station>> nearbyStations(@QueryMap Map<String, String> filters);
@@ -44,4 +47,7 @@ public interface EnpublicApi {
 
     @GET("achievement/{id}")
     Call<Achievement> getAchievement(@Header("Authorization") String basicAuth, @Path("id") String id);
+
+    @POST("api/profile/activity")
+    Call<POSTResult> sendActivities(@Header("Authorization") String basicAuth, @Body ActivityDetails activity);
 }

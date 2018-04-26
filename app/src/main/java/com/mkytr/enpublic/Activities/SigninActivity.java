@@ -17,6 +17,7 @@ import com.mkytr.enpublic.EnpublicApi;
 import com.mkytr.enpublic.MainActivity;
 import com.mkytr.enpublic.POSTResult;
 import com.mkytr.enpublic.R;
+import com.mkytr.enpublic.RestClient;
 import com.mkytr.enpublic.RestErrorUtils;
 import com.mkytr.enpublic.RestfulObjects.User;
 
@@ -65,7 +66,7 @@ public class SigninActivity extends AppCompatActivity {
         String authContent = Base64.encodeToString(toEncode.getBytes(), Base64.NO_WRAP);
         final String authText = "Basic " + authContent;
 
-        EnpublicApi client = MapsActivity.restClient.getApiInterface();
+        EnpublicApi client = RestClient.getInstance().getInterface();
         final ProgressBar pbLogin = findViewById(R.id.pbLogin);
         pbLogin.setVisibility(View.VISIBLE);
         final ScrollView svLoginForm = findViewById(R.id.svLoginForm);

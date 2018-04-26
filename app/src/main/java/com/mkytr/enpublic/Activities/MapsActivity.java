@@ -14,6 +14,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.firebase.jobdispatcher.Constraint;
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.Lifetime;
+import com.firebase.jobdispatcher.RetryStrategy;
+import com.firebase.jobdispatcher.Trigger;
 import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.ActivityRecognitionClient;
 import com.google.android.gms.location.ActivityTransition;
@@ -35,6 +42,7 @@ import com.mkytr.enpublic.Broadcasts.LocationListening;
 import com.mkytr.enpublic.Broadcasts.TransitionListening;
 import com.mkytr.enpublic.R;
 import com.mkytr.enpublic.RestClient;
+import com.mkytr.enpublic.Services.DataSenderService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +53,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
 
     public static final String PREF_NAME = "enpublic_prefs";
-    public static final RestClient restClient = new RestClient();
     private static int REQUEST_LOCATION = 0;
 
     public static final String DEBUG_TAG = "ENPUBLIC_DBG";
@@ -79,6 +86,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void startBackgroundTasks() {
         startTransitionListening();
         startLocationListening();
+        startDataSenderJob();
+    }
+
+    private void startDataSenderJob() {
+        FirebaseJobDispatcher dataSender = new FirebaseJobDispatcher(new GooglePlayDriver(getApplicationContext()));
+
+        Job dataJob = dataSender.newJobBuilder()
+                .setService(DataSenderService.class)
+                .setTag("enpublicdatasender")
+                .setRecurring(true)
+                .setLifetime(Lifetime.FOREVER)
+                .setTrigger(Trigger.executionWindow(28800, 32400))
+                .setReplaceCurrent(false)
+                .setRetryStrategy(RetryStrategy.DEFAULT_EXPONENTIAL)
+                .setConstraints(Constraint.ON_UNMETERED_NETWORK)
+                .build();
+
+        dataSender.mustSchedule(dataJob);
     }
 
     private void startTransitionListening() {
