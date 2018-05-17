@@ -37,22 +37,12 @@
             android:label="@string/title_profile_activity"
             android:parentActivityName=".Activities.MapsActivity" />
         <activity
-            android:name=".MainActivity"
-            android:label="@string/title_activity_main">
-        </activity>
-        <activity
-            android:name=".SearchActivity"
-            android:label="@string/label_search"
-            android:parentActivityName=".Activities.MapsActivity" />
-        <activity
             android:name=".Activities.SigninActivity"
-            android:label="@string/title_signin_activity"
-            android:parentActivityName=".Activities.MapsActivity" />
+            android:label="@string/title_signin_activity" />
         <activity
             android:name=".Activities.SignupActivity"
             android:label="@string/title_signup_activity"
             android:parentActivityName=".Activities.SigninActivity" />
-        <activity android:name=".DirectionResultsActivity" />
         <activity
             android:name=".Activities.MapsActivity"
             android:label="@string/title_activity_maps">

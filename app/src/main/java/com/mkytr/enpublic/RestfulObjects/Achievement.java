@@ -5,17 +5,15 @@ package com.mkytr.enpublic.RestfulObjects;
  */
 
 public class Achievement {
-    private String _id;
     private String name;
+    private String description;
 
-    public Achievement(String _id, String name) {
-        this._id = _id;
+    public Achievement(String name, String description) {
         this.name = name;
+        this.description = description;
     }
 
-    public String get_id() {
-        return _id;
-    }
+    public String getDescription() { return description; }
 
     public String getName() {
         return name;

@@ -16,7 +16,7 @@ import retrofit2.Converter;
 public class RestErrorUtils {
     public static ApiError parseError(Response<?> response){
         Converter<ResponseBody, ApiError> converter =
-                MapsActivity.restClient
+                RestClient.getInstance()
                         .getRetrofit()
                         .responseBodyConverter(ApiError.class, new Annotation[0]);
 

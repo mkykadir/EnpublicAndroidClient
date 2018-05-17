@@ -14,7 +14,7 @@
     <string name="b_to_station">To</string>
     <string name="b_go">Go</string>
     <string name="title_activity_login">Sign in</string>
-    <string name="et_username">Username</string>
+    <string name="et_email">E-Mail</string>
     <string name="et_password">Password</string>
     <string name="b_signin">Sign In</string>
     <string name="b_signup">Sign Up</string>

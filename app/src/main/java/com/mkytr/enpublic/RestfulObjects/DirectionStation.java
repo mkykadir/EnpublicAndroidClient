@@ -1,70 +1,64 @@
 package com.mkytr.enpublic.RestfulObjects;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.graphics.Color;
+import android.support.annotation.Nullable;
 
-/**
- * Created by mkyka on 24.12.2017.
- */
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.mkytr.enpublic.EnpublicApi;
+import com.mkytr.enpublic.RestClient;
 
-public class DirectionStation implements Parcelable {
-    private String name;
-    private double latitude;
-    private double longitude;
-    private DirectionLine way;
+import java.util.ArrayList;
+import java.util.List;
 
-    public DirectionStation(String name, double latitude, double longitude, DirectionLine way) {
-        this.name = name;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.way = way;
+import retrofit2.Call;
+import retrofit2.Callback;
+
+public class DirectionStation extends Station{
+
+    @Nullable
+    private Vehicle next;
+
+    public DirectionStation(String shortn, String name, double latitude, double longitude, @Nullable Vehicle next) {
+        super(shortn, name, latitude, longitude);
+        this.next = next;
     }
 
-    protected DirectionStation(Parcel in){
-        this.name = in.readString();
-        this.latitude = in.readDouble();
-        this.longitude = in.readDouble();
-        this.way = in.readParcelable(DirectionLine.class.getClassLoader());
+    @Nullable
+    public Vehicle getNext() {
+        return next;
     }
 
-    public static final Creator<DirectionStation> CREATOR = new Creator<DirectionStation>() {
-        @Override
-        public DirectionStation createFromParcel(Parcel source) {
-            return new DirectionStation(source);
+    public static void getDirections(String auth, String fromShort, String toShort,
+                                     Callback<List<List<DirectionStation>>> callback) {
+        EnpublicApi client = RestClient.getInstance().getInterface();
+        Call<List<List<DirectionStation>>> call = client.getDirection(auth, fromShort, toShort);
+        call.enqueue(callback);
+    }
+
+    public static List<Polyline> showResultOnGoogleMap(GoogleMap mMap, List<DirectionStation> result) {
+        Station.showStationsOnGoogleMap(mMap, result);
+        List<Polyline> poly_lines = new ArrayList<>();
+        int i = 0;
+        while (i < result.size()) {
+            DirectionStation station = result.get(i);
+            Vehicle vehicle = station.getNext();
+            if(vehicle != null) {
+                if (i + 1 < result.size()) {
+                    DirectionStation nextStation = result.get(i + 1);
+                    Polyline line = mMap.addPolyline(new PolylineOptions()
+                            .add(new LatLng(station.getLatitude(), station.getLongitude()),
+                                    new LatLng(nextStation.getLatitude(), nextStation.getLongitude()))
+                            .color(Color.parseColor("#" + vehicle.getColor()))
+                            .width(8));
+                    poly_lines.add(line);
+                }
+            }
+            i++;
         }
-
-        @Override
-        public DirectionStation[] newArray(int size) {
-            return new DirectionStation[size];
-        }
-    };
-
-    public String getName() {
-        return name;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public DirectionLine getWay() {
-        return way;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(name);
-        dest.writeDouble(latitude);
-        dest.writeDouble(longitude);
-        dest.writeParcelable(way, 0);
+        return poly_lines;
     }
 }

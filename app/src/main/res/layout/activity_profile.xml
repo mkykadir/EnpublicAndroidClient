@@ -41,13 +41,13 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tvUsername"
+            android:id="@+id/tvEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tvUserName"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="11dp"
-            android:text="\@mkykadir"
+            android:text="mky515\@gmail\.com"
             android:textColor="@android:color/white" />
     </RelativeLayout>
 

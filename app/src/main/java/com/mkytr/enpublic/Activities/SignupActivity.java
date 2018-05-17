@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.mkytr.enpublic.ApiError;
 import com.mkytr.enpublic.EnpublicApi;
 import com.mkytr.enpublic.R;
+import com.mkytr.enpublic.RestClient;
 import com.mkytr.enpublic.RestErrorUtils;
 import com.mkytr.enpublic.RestfulObjects.User;
 import com.mkytr.enpublic.RestfulObjects.UserSignup;
@@ -24,7 +25,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SignupActivity extends AppCompatActivity {
+public class SignupActivity extends AppCompatActivity implements Callback<User> {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,52 +47,26 @@ public class SignupActivity extends AppCompatActivity {
     public void onSignUpButtonClick(View v){
         EditText etName = findViewById(R.id.etNameSignup);
         EditText etMail = findViewById(R.id.etMailSignup);
-        EditText etUsername = findViewById(R.id.etUsernameSignup);
         EditText etPassword = findViewById(R.id.etPasswordSignup);
 
         String name = etName.getText().toString();
         String mail = etMail.getText().toString();
-        String username = etUsername.getText().toString();
         String password = etPassword.getText().toString();
 
-        if(name.trim().equals("") || mail.trim().equals("") || username.trim().equals("") || password.trim().equals("")){
+        if(name.trim().equals("") || mail.trim().equals("") || password.trim().equals("")){
             Toast.makeText(this, "All fields are required!", Toast.LENGTH_LONG).show();
             return;
         }
 
 
-        UserSignup credentials = new UserSignup(username, name, mail, password);
+        UserSignup credentials = new UserSignup(name, mail, password);
 
-        final ScrollView svSignUpForm = findViewById(R.id.svSignUpForm);
-        final ProgressBar pbSignup = findViewById(R.id.pbSignup);
+        ScrollView svSignUpForm = findViewById(R.id.svSignUpForm);
+        ProgressBar pbSignup = findViewById(R.id.pbSignup);
         svSignUpForm.setVisibility(View.GONE);
         pbSignup.setVisibility(View.VISIBLE);
 
-        EnpublicApi client = MapsActivity.restClient.getApiInterface();
-        Call<User> call = client.signupUser(credentials);
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                if(response.isSuccessful()){
-                    User result = response.body();
-                    Toast.makeText(SignupActivity.this, "Successfully registered, "+result.get_username(),Toast.LENGTH_LONG).show();
-                    finish();
-                }else {
-                    ApiError error = RestErrorUtils.parseError(response);
-                    Toast.makeText(SignupActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
-                    svSignUpForm.setVisibility(View.VISIBLE);
-                    pbSignup.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Toast.makeText(SignupActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                svSignUpForm.setVisibility(View.VISIBLE);
-                pbSignup.setVisibility(View.GONE);
-            }
-        });
-
+        credentials.registerUser(this);
     }
 
     /**
@@ -112,6 +87,31 @@ public class SignupActivity extends AppCompatActivity {
      */
     public boolean validateConfirmPassword(String pass, String confirm){
         return pass.contentEquals(confirm);
+    }
+
+    @Override
+    public void onResponse(Call<User> call, Response<User> response) {
+        if(response.isSuccessful()){
+            User result = response.body();
+            Toast.makeText(SignupActivity.this, "Successfully registered, "+result.getEmail(),Toast.LENGTH_LONG).show();
+            finish();
+        }else {
+            ScrollView svSignUpForm = findViewById(R.id.svSignUpForm);
+            ProgressBar pbSignup = findViewById(R.id.pbSignup);
+            ApiError error = RestErrorUtils.parseError(response);
+            Toast.makeText(SignupActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+            svSignUpForm.setVisibility(View.VISIBLE);
+            pbSignup.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onFailure(Call<User> call, Throwable t) {
+        ScrollView svSignUpForm = findViewById(R.id.svSignUpForm);
+        ProgressBar pbSignup = findViewById(R.id.pbSignup);
+        Toast.makeText(SignupActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        svSignUpForm.setVisibility(View.VISIBLE);
+        pbSignup.setVisibility(View.GONE);
     }
 
     /**

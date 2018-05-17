@@ -1,6 +1,7 @@
 package com.mkytr.enpublic;
 
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.mkytr.enpublic.RestfulObjects.Achievement;
@@ -18,7 +19,6 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 
@@ -27,27 +27,29 @@ public interface EnpublicApi {
 
     // TODO fix those according to the latest API changes
 
-    @GET("station/nearby")
-    Call<List<Station>> nearbyStations(@QueryMap Map<String, String> filters);
+    @GET("api/station")
+    Call<List<Station>> getStationsByName(@NonNull @Header("Authorization") String basicAuth,
+                                    @NonNull @Query("name") String stationName);
 
-    @GET("station/search")
-    Call<List<Station>> searcyStationsByName(@Nullable @Header("Authorization") String basicAuth, @Query("name") String name);
+    @GET("api/station")
+    Call<List<Station>> getStationsByLocation(@NonNull @Header("Authorization") String basicAuth,
+                                              @NonNull @QueryMap Map<String, String> locationFilters);
 
-    @GET("station/direct")
-    Call<List<List<DirectionStation>>> getDirections(@Nullable @Header("Authorization") String basicAuth, @Query("from") String fromStation, @Query("to") String toStation);
+    @GET("api/station/direct")
+    Call<List<List<DirectionStation>>> getDirection(@NonNull @Header("Authorization") String basicAuth,
+                                             @Query("from") String fromStation,
+                                             @Query("to") String toStation);
 
     @POST("api/signup")
     Call<User> signupUser(@Body UserSignup signup);
 
-    @GET("login")
-    Call<POSTResult> loginUser(@Header("Authorization") String basicAuth);
-
     @GET("api/profile")
     Call<User> userProfile(@Header("Authorization") String basicAuth);
 
-    @GET("achievement/{id}")
-    Call<Achievement> getAchievement(@Header("Authorization") String basicAuth, @Path("id") String id);
+    @GET("api/achievement")
+    Call<List<Achievement>> getUserAchievements(@Header("Authorization") String basicAuth);
 
     @POST("api/profile/activity")
-    Call<POSTResult> sendActivities(@Header("Authorization") String basicAuth, @Body ActivityDetails activity);
+    Call<POSTResult> sendActivities(@Header("Authorization") String basicAuth,
+                                    @Body ActivityDetails activity);
 }

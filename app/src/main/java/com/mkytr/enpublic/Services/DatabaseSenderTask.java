@@ -4,11 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
-import com.google.gson.Gson;
 import com.mkytr.enpublic.Database.DatabaseSingleton;
 import com.mkytr.enpublic.Database.LocationEntity;
 import com.mkytr.enpublic.Database.TransitionEntity;
-import com.mkytr.enpublic.MainActivity;
 import com.mkytr.enpublic.POSTResult;
 import com.mkytr.enpublic.RestClient;
 import com.mkytr.enpublic.RestfulObjects.ActivityDetails;
@@ -41,8 +39,13 @@ public class DatabaseSenderTask extends AsyncTask<Void, Void, Void> {
         result.enqueue(new Callback<POSTResult>() {
             @Override
             public void onResponse(Call<POSTResult> call, Response<POSTResult> response) {
-                // on response
                 // TODO sent location data in back
+                if(response.isSuccessful()) {
+
+                    // clearing existing data
+                    dbSingleton.getLocationsTable().clearLocations();
+                    dbSingleton.getTransitionsTable().clearTransitions();
+                }
             }
 
             @Override

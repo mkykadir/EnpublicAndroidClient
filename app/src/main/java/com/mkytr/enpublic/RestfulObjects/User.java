@@ -2,27 +2,29 @@ package com.mkytr.enpublic.RestfulObjects;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Base64;
+
+import com.mkytr.enpublic.EnpublicApi;
+import com.mkytr.enpublic.RestClient;
 
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
 
 /**
  * Created by mkytr on 15.12.2017.
  */
 
 public class User implements Parcelable{
-    private String username;
     private String email;
     private String name;
 
-    public User(String username, String email, String name) {
-        this.username = username;
+    public User(String email, String name) {
         this.email = email;
         this.name = name;
     }
 
-    public String get_username() {
-        return username;
-    }
 
     public String getEmail() {
         return email;
@@ -31,6 +33,21 @@ public class User implements Parcelable{
     public String getName() {
         return name;
     }
+
+
+    public static String getAuthText(String email, String password) {
+        String toEncode = email + ":" + password;
+        String authContent = Base64.encodeToString(toEncode.getBytes(), Base64.NO_WRAP);
+        String authText = "Basic " + authContent;
+        return authText;
+    }
+
+    public static void loginUser(String authText, Callback<User> callback) {
+        EnpublicApi client = RestClient.getInstance().getInterface();
+        Call<User> call = client.userProfile(authText);
+        call.enqueue(callback);
+    }
+
 
     // Parcelable requirements
 
@@ -52,13 +69,11 @@ public class User implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(username);
         dest.writeString(email);
         dest.writeString(name);
     }
 
     private User(Parcel in){
-        username = in.readString();
         email = in.readString();
         name = in.readString();
     }

@@ -60,13 +60,13 @@
                 android:orientation="vertical">
 
                 <EditText
-                    android:id="@+id/etUsernameLogin"
+                    android:id="@+id/etEmailLogin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:focusedByDefault="false"
-                    android:hint="@string/et_username"
-                    android:inputType="textAutoComplete"
+                    android:hint="@string/et_email"
+                    android:inputType="textEmailAddress"
                     android:singleLine="true" />
 
                 <EditText
@@ -100,6 +100,7 @@
                     android:text="@string/b_signup"
                     android:textColor="@color/colorPrimary"
                     android:textSize="12sp" />
+
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

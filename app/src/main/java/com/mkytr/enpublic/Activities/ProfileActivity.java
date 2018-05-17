@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,7 +25,6 @@ import com.mkytr.enpublic.RestClient;
 import com.mkytr.enpublic.RestErrorUtils;
 import com.mkytr.enpublic.RestfulObjects.Achievement;
 import com.mkytr.enpublic.EnpublicApi;
-import com.mkytr.enpublic.MainActivity;
 import com.mkytr.enpublic.R;
 import com.mkytr.enpublic.RestfulObjects.User;
 
@@ -36,10 +34,8 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity implements Callback<User> {
 
     private ArrayList<Achievement> mList;
     private ArrayAdapter<Achievement> mAdapter;
@@ -49,9 +45,9 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        final GridView achievementGrid = findViewById(R.id.gvAchivements);
-        final RelativeLayout llProfileInfo = findViewById(R.id.rlProfileInfo);
-        final ProgressBar pbProfile = findViewById(R.id.pbProfile);
+        GridView achievementGrid = findViewById(R.id.gvAchivements);
+        RelativeLayout llProfileInfo = findViewById(R.id.rlProfileInfo);
+        ProgressBar pbProfile = findViewById(R.id.pbProfile);
         TextView gridEmpty = new TextView(this);
         gridEmpty.setVisibility(View.GONE);
         gridEmpty.setText("No achievements found"); // TODO: Make it on string.xml
@@ -64,7 +60,7 @@ public class ProfileActivity extends AppCompatActivity {
         // After log-in we should get profile information
         User profile = getIntent().getParcelableExtra("profile-info");
 
-        SharedPreferences preferences = getSharedPreferences(MainActivity.PREF_NAME ,MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences(MapsActivity.PREF_NAME ,MODE_PRIVATE);
         final String auth = preferences.getString("auth", null);
         if(auth == null){ // If user not logged in!
             Intent intent = new Intent(getApplicationContext(), SigninActivity.class);
@@ -72,44 +68,28 @@ public class ProfileActivity extends AppCompatActivity {
             finish();
             return;
         }
-        final EnpublicApi client = RestClient.getInstance().getInterface();
 
-        final TextView tvUserName = findViewById(R.id.tvUserName);
-        final TextView tvUsername = findViewById(R.id.tvUsername);
+        TextView tvUserName = findViewById(R.id.tvUserName);
+        TextView tvEmail = findViewById(R.id.tvEmail);
 
         if (profile == null){
-            Call<User> call = client.userProfile(auth);
-            call.enqueue(new Callback<User>() {
-                @Override
-                public void onResponse(Call<User> call, Response<User> response) {
-                    if(response.isSuccessful()){
-                        User result = response.body();
-                        tvUserName.setText(result.getName());
-                        tvUsername.setText(result.get_username());
-
-                        pbProfile.setVisibility(View.GONE);
-                        llProfileInfo.setVisibility(View.VISIBLE);
-                        achievementGrid.setVisibility(View.VISIBLE);
-                    }else{
-                        ApiError error = RestErrorUtils.parseError(response);
-                        Toast.makeText(ProfileActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
-                        // TODO: Check this error
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<User> call, Throwable t) {
-                    Toast.makeText(ProfileActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
+            User.loginUser(auth, this);
         }else{
             tvUserName.setText(profile.getName());
-            tvUsername.setText(profile.get_username());
+            tvEmail.setText(profile.getEmail());
 
             pbProfile.setVisibility(View.GONE);
             llProfileInfo.setVisibility(View.VISIBLE);
             achievementGrid.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // super.onBackPressed();
+        Intent mapsintent = new Intent(getApplicationContext(), MapsActivity.class);
+        startActivity(mapsintent);
+        finish();
     }
 
     @Override
@@ -131,6 +111,34 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onResponse(Call<User> call, Response<User> response) {
+        if(response.isSuccessful()){
+            TextView tvUserName = findViewById(R.id.tvUserName);
+            TextView tvEmail = findViewById(R.id.tvEmail);
+            GridView achievementGrid = findViewById(R.id.gvAchivements);
+            RelativeLayout llProfileInfo = findViewById(R.id.rlProfileInfo);
+            ProgressBar pbProfile = findViewById(R.id.pbProfile);
+
+            User result = response.body();
+            tvUserName.setText(result.getName());
+            tvEmail.setText(result.getEmail());
+
+            pbProfile.setVisibility(View.GONE);
+            llProfileInfo.setVisibility(View.VISIBLE);
+            achievementGrid.setVisibility(View.VISIBLE);
+        }else{
+            ApiError error = RestErrorUtils.parseError(response);
+            Toast.makeText(ProfileActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+            // TODO: Check this error
+        }
+    }
+
+    @Override
+    public void onFailure(Call<User> call, Throwable t) {
+        Toast.makeText(ProfileActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
     }
 
     class AchievementsGridAdapter extends ArrayAdapter<Achievement> {
