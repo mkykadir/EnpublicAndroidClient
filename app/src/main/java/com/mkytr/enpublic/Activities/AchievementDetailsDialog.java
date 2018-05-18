@@ -30,7 +30,12 @@ public class AchievementDetailsDialog extends DialogFragment {
         TextView tvAchievementNameDialog = v.findViewById(R.id.tvAchievementNameDialog);
 
         byte[] bitmapArray = getArguments().getByteArray("image");
-        Bitmap image = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
+        Bitmap image;
+        try{
+            image = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
+        }catch(NullPointerException e){
+            image = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.no_image);
+        }
         String detail = getArguments().getString("detail");
 
         iAchievementDialog.setImageBitmap(image);
