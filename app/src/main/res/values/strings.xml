@@ -40,6 +40,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="no_achievements">No achievements found</string>
     <string name="title_activity_signin">Sign In</string>
     <string name="title_activity_maps">Map</string>
 </resources>

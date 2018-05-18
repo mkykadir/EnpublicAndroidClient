@@ -18,4 +18,9 @@ public class Achievement {
     public String getName() {
         return name;
     }
+
+    public String getImageUrl() {
+        return "http://web.itu.edu.tr/yucelmuh/enpublic/img/" + this.name + ".png";
+    }
+
 }

@@ -48,6 +48,12 @@ public class User implements Parcelable{
         call.enqueue(callback);
     }
 
+    public static void getAchievements(String authText, Callback<List<Achievement>> callback) {
+        EnpublicApi client = RestClient.getInstance().getInterface();
+        Call<List<Achievement>> call = client.getUserAchievements(authText);
+        call.enqueue(callback);
+    }
+
 
     // Parcelable requirements
 
