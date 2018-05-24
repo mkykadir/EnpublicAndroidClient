@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -28,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.jobdispatcher.Constraint;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
@@ -155,7 +157,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if(!authString.contentEquals("none")) {
             // User logged in start services and JobDispatcher
-            // startBackgroundTasks();
+            startBackgroundTasks();
         }else{
             Intent intent = new Intent(this, SigninActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -187,7 +189,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             stationSearchVisibility(false);
             directionResultVisibility(false);
         }else{
-            stationInformationVisibility(false);
+            // stationInformationVisibility(false);
             super.onBackPressed();
         }
     }
@@ -214,6 +216,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .build();
 
         dataSender.mustSchedule(dataJob);
+        Toast.makeText(this, "Data sender job has just started!", Toast.LENGTH_LONG).show();
     }
 
     private void startTransitionListening() {
@@ -340,7 +343,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             });
         }catch (SecurityException ex){
             ex.printStackTrace();
-            // TODO: Ask for location permission
         }
     }
 
@@ -349,11 +351,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 14f));
         Station selectedStation = (Station) marker.getTag();
         showStationInformation(selectedStation, false);
-        // TODO: Show station information!
         return true;
     }
-
-
 
     protected void getNearbyStations(LatLng location) {
         if(authString.equals("none"))
@@ -390,7 +389,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             @Override
             public void onFailure(Call<List<Station>> call, Throwable t) {
-                // TODO: Show cannot found any stations error
                 showSearchResult(null);
             }
         });
@@ -595,7 +593,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 StringBuilder sbStations = new StringBuilder();
                 StringBuilder sbVehicles = new StringBuilder();
-
+                int index = 0;
                 for(DirectionStation station : result) {
                     sbStations.append(station.getName());
                     sbStations.append("->");
@@ -603,7 +601,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     if(vehicle != null) {
                         sbVehicles.append(vehicle.getCode());
                         sbVehicles.append(',');
+                    }else if(index < result.size() - 1){
+                        sbVehicles.append('W');
+                        sbVehicles.append(',');
                     }
+                    index++;
                 }
                 sbStations.deleteCharAt(sbStations.lastIndexOf("-"));
                 sbStations.deleteCharAt(sbStations.lastIndexOf(">"));

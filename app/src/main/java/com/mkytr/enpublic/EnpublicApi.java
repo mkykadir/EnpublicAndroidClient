@@ -23,9 +23,6 @@ import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 
 public interface EnpublicApi {
-    // @Header("Authorization") String basicAuth,
-
-    // TODO fix those according to the latest API changes
 
     @GET("api/station")
     Call<List<Station>> getStationsByName(@NonNull @Header("Authorization") String basicAuth,
@@ -50,6 +47,6 @@ public interface EnpublicApi {
     Call<List<Achievement>> getUserAchievements(@Header("Authorization") String basicAuth);
 
     @POST("api/profile/activity")
-    Call<POSTResult> sendActivities(@Header("Authorization") String basicAuth,
+    Call<List<Achievement>> sendActivities(@Header("Authorization") String basicAuth,
                                     @Body ActivityDetails activity);
 }

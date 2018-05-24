@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Enpublic</string>
+    <string name="title_activity_main">Enpublic</string>
+    <string name="et_to_hint">Buraya..</string>
+    <string name="et_from_hint">Buradan...</string>
+    <string name="menu_search">Ara</string>
+    <string name="menu_profile">Profil</string>
+    <string name="label_search">Ara</string>
+    <string name="action_sign_in">Giriş yap veya kaydol</string>
+    <string name="action_sign_in_short">Giriş Yap</string>
+    <string name="activity_notification_title">Aktivite Sonuçları</string>
+    <string name="b_from_station">Buradan</string>
+    <string name="b_go">Git</string>
+    <string name="b_signin">Giriş yap</string>
+    <string name="b_signup">Kayıt ol</string>
+    <string name="b_to_station">Buraya</string>
+    <string name="error_field_required">Bu alan gerekli</string>
+    <string name="error_incorrect_password">Şifre hatalı</string>
+    <string name="error_invalid_email">Eposta adresi doğru yazılmadı</string>
+    <string name="error_invalid_password">Şifre çok kısa</string>
+    <string name="et_email">E-Posta</string>
+    <string name="et_mail">E-Posta</string>
+    <string name="et_name">İsim</string>
+    <string name="et_password">Şifre</string>
+    <string name="et_password_confirm">Şifre (Tekrar)</string>
+    <string name="et_search_hint">Ara...</string>
+    <string name="menu_logout">Çıkış yap</string>
+    <string name="no_achievements">Başarı bulunamadı</string>
+    <string name="permission_rationale">Kişiler izni E-posta önerileri sunmak için gerekir</string>
+    <string name="prompt_email">Eposta</string>
+    <string name="prompt_password">Şifre (opsiyonel)</string>
+    <string name="title_activity_login">Giriş Yap</string>
+    <string name="title_activity_maps">Harita</string>
+    <string name="title_activity_signin">Giriş Yap</string>
+    <string name="title_profile_activity">Profil</string>
+    <string name="title_signin_activity">Giriş Yap</string>
+    <string name="title_signup_activity">Giriş Yap</string>
+    <string name="tv_confirm_error">Şifre tekrarı orijinali ile eşleşmiyor</string>
+    <string name="tv_email_error">Lütfen geçerli posta adresi girin</string>
+    <string name="tv_empty_list">Hiçbir şey bulunamadı...</string>
+    <string name="tv_empty_result">Hiçbir sonuç bulunamadı</string>
+    <string name="activity_notification_body">Son aktivitelerinize göre %1$d başarım kazandınız.</string>
+</resources>

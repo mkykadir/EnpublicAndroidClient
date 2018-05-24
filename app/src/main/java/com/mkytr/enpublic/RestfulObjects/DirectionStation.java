@@ -46,17 +46,22 @@ public class DirectionStation extends Station{
         while (i < result.size()) {
             DirectionStation station = result.get(i);
             Vehicle vehicle = station.getNext();
-            if(vehicle != null) {
-                if (i + 1 < result.size()) {
-                    DirectionStation nextStation = result.get(i + 1);
-                    Polyline line = mMap.addPolyline(new PolylineOptions()
-                            .add(new LatLng(station.getLatitude(), station.getLongitude()),
-                                    new LatLng(nextStation.getLatitude(), nextStation.getLongitude()))
-                            .color(Color.parseColor("#" + vehicle.getColor()))
-                            .width(8));
-                    poly_lines.add(line);
-                }
+
+            if(vehicle == null && i < result.size() - 1)
+                vehicle = new Vehicle("W", "9b9b9b");
+            else if(vehicle == null)
+                return poly_lines;
+
+            if (i + 1 < result.size()) {
+                DirectionStation nextStation = result.get(i + 1);
+                Polyline line = mMap.addPolyline(new PolylineOptions()
+                        .add(new LatLng(station.getLatitude(), station.getLongitude()),
+                                new LatLng(nextStation.getLatitude(), nextStation.getLongitude()))
+                        .color(Color.parseColor("#" + vehicle.getColor()))
+                        .width(8));
+                poly_lines.add(line);
             }
+
             i++;
         }
         return poly_lines;
