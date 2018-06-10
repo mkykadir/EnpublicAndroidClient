@@ -40,6 +40,7 @@
         completions."
     </string>
     <string name="no_achievements">No achievements found</string>
+    <string name="no_gained_achievements">Achievements require working harder! Keep going...</string>
     <string name="title_activity_signin">Sign In</string>
     <string name="title_activity_maps">Map</string>
     <string name="activity_notification_title">Activity Result</string>

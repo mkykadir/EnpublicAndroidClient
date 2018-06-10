@@ -36,7 +36,6 @@
             android:layout_below="@+id/iProfile"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="15dp"
-            android:text="Muhammed Kadir Yücel"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
 
@@ -47,7 +46,6 @@
             android:layout_below="@+id/tvUserName"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="11dp"
-            android:text="mky515\@gmail\.com"
             android:textColor="@android:color/white" />
     </RelativeLayout>
 

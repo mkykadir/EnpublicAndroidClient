@@ -13,6 +13,7 @@ import com.mkytr.enpublic.Activities.MapsActivity;
 import com.mkytr.enpublic.Activities.ProfileActivity;
 import com.mkytr.enpublic.Database.DatabaseSingleton;
 import com.mkytr.enpublic.Database.LocationEntity;
+import com.mkytr.enpublic.Database.Tasks.DatabaseClearTask;
 import com.mkytr.enpublic.Database.TransitionEntity;
 import com.mkytr.enpublic.POSTResult;
 import com.mkytr.enpublic.R;
@@ -46,29 +47,43 @@ public class DatabaseSenderTask extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
         ActivityDetails activity = new ActivityDetails(getTransitions(), getLocations());
         String auth = preferences.getString("auth", "");
-        Call<List<Achievement>> result = client.getInterface().sendActivities(auth, activity);
+        Call<List<Achievement>> result = client.getInterface().sendActivities(auth, "application/json", activity);
         result.enqueue(new Callback<List<Achievement>>() {
             @Override
             public void onResponse(Call<List<Achievement>> call, Response<List<Achievement>> response) {
+                int resultSize = -1;
                 if(response.isSuccessful()) {
                     // clearing existing data
-                    dbSingleton.getLocationsTable().clearLocations();
-                    dbSingleton.getTransitionsTable().clearTransitions();
+                    DatabaseClearTask clearTask = new DatabaseClearTask(dbSingleton);
+                    clearTask.execute();
 
                     List<Achievement> result = response.body();
                     int resultLength = 0;
                     if (result != null)
                             resultLength = result.size();
 
-                    showNotification(resultLength);
-                }else{
-                    showNotification(-1);
+                    resultSize = resultLength;
                 }
+                String notificationContent;
+                switch (resultSize) {
+                    case -1:
+                        notificationContent = "";
+                        // Dont show notification
+                        return;
+                    case 0:
+                        notificationContent = context.getResources().getString(R.string.no_gained_achievements);
+                        break;
+                    default:
+                        notificationContent = String.format(context.getResources().
+                                getString(R.string.activity_notification_body), resultSize);
+                        break;
+                }
+                showNotification(notificationContent);
             }
 
             @Override
             public void onFailure(Call<List<Achievement>> call, Throwable t) {
-                showNotification(-1);
+                showNotification(t.getLocalizedMessage());
             }
         });
         return null;
@@ -82,20 +97,18 @@ public class DatabaseSenderTask extends AsyncTask<Void, Void, Void> {
         return dbSingleton.getTransitionsTable().getAllTransitions();
     }
 
-    private void showNotification(int resultSize) {
+    private void showNotification(String content) {
         Intent profileIntent = new Intent(context, ProfileActivity.class);
         profileIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, profileIntent, 0);
 
         String notificationTitle = context.getResources().
                 getString(R.string.activity_notification_title);
-        String notificationContent = String.format(context.getResources().
-                getString(R.string.activity_notification_body), resultSize);
 
         NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.mipmap.ic_launcher_round)
                 .setContentTitle(notificationTitle)
-                .setContentText(notificationContent)
+                .setContentText(content)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);

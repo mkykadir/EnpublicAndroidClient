@@ -47,6 +47,6 @@ public interface EnpublicApi {
     Call<List<Achievement>> getUserAchievements(@Header("Authorization") String basicAuth);
 
     @POST("api/profile/activity")
-    Call<List<Achievement>> sendActivities(@Header("Authorization") String basicAuth,
+    Call<List<Achievement>> sendActivities(@Header("Authorization") String basicAuth, @Header("Content-Type") String contentType,
                                     @Body ActivityDetails activity);
 }

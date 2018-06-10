@@ -19,6 +19,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <receiver android:name=".Broadcasts.LocationListening"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.mkytr.enpublic.Broadcasts.LocationListening.ACTION_PROCESS_UPDATES" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".Broadcasts.TransitionListening"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.mkytr.enpublic.Broadcasts.TransitionListening.ACTION_TRANSITION" />
+            </intent-filter>
+        </receiver>
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

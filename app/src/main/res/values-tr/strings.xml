@@ -41,4 +41,5 @@
     <string name="tv_empty_list">Hiçbir şey bulunamadı...</string>
     <string name="tv_empty_result">Hiçbir sonuç bulunamadı</string>
     <string name="activity_notification_body">Son aktivitelerinize göre %1$d başarım kazandınız.</string>
+    <string name="no_gained_achievements">Bir şeyler kazanabilmek için daha sıkı çalışmak lazım! Devam et...</string>
 </resources>

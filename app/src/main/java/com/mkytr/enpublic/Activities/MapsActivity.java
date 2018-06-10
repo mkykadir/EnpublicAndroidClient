@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -65,6 +66,7 @@ import com.mkytr.enpublic.RestfulObjects.DirectionStation;
 import com.mkytr.enpublic.RestfulObjects.Station;
 import com.mkytr.enpublic.RestfulObjects.Vehicle;
 import com.mkytr.enpublic.Services.DataSenderService;
+import com.mkytr.enpublic.Services.DatabaseSenderTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -216,7 +218,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .build();
 
         dataSender.mustSchedule(dataJob);
-        Toast.makeText(this, "Data sender job has just started!", Toast.LENGTH_LONG).show();
+        // Toast.makeText(this, "Data sender job has just started!", Toast.LENGTH_LONG).show();
     }
 
     private void startTransitionListening() {
@@ -242,7 +244,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
                 .build());
 
-        // WALKING and RUNNING may not be required!
+
         transitions.add(new ActivityTransition.Builder()
                 .setActivityType(DetectedActivity.WALKING)
                 .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
@@ -262,6 +264,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .setActivityType(DetectedActivity.RUNNING)
                 .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
                 .build());
+
 
         // Build required things to connect Activity Transition API
         Intent activityTransitionIntent = new Intent(this, TransitionListening.class);
@@ -323,6 +326,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Intent profileActivityIntent = new Intent(this, ProfileActivity.class);
                 startActivity(profileActivityIntent);
                 break;
+            /*case R.id.mDataSend:
+                SharedPreferences preferences = getSharedPreferences(MapsActivity.PREF_NAME ,MODE_PRIVATE);
+                DatabaseSenderTask task = new DatabaseSenderTask(getApplicationContext(), preferences);
+                task.execute();
+                break;
+            */
         }
 
         return super.onOptionsItemSelected(item);

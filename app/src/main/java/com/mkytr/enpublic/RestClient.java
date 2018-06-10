@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class RestClient {
-    // public static final String BASE_API_URL = "http://192.168.1.43:5000/";
+    // public static final String BASE_API_URL = "http://192.168.1.39:5000/";
     public static final String BASE_API_URL = "http://enpublic.mkytr.com/";
     private static RestClient currentInstance = null;
     private static EnpublicApi apiInterface = null;
